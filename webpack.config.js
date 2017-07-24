@@ -5,7 +5,8 @@ const webpack = require('webpack');
 const path = require('path');
 
 const isProduction = process.env.NODE_ENV === 'production';
-const vendors = ['angular']
+// set all vendors
+// const vendors = []
 
 const PATHS = {
 	app: path.resolve(__dirname, 'app'),
@@ -14,8 +15,8 @@ const PATHS = {
 
 config = {
 	entry: {
-		main: PATHS.app,
-		vendor: vendors
+		main: PATHS.app
+		// vendor: vendors
 	},
 	output: {
 		path: PATHS.build,

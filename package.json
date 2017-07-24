@@ -4,6 +4,8 @@
   "description": "this is me trying to learn react... lol",
   "main": "index.js",
   "scripts": {
+    "dev": "webpack-dev-server --inline --hot",
+    "build": "webpack --progress --watch --colors",
     "test": "test"
   },
   "repository": {
@@ -26,17 +28,27 @@
     "babel-loader": "^7.1.1",
     "babel-polyfill": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
     "clean-webpack-plugin": "^0.1.16",
     "concurrently": "^3.5.0",
     "css-loader": "^0.28.4",
     "file-loader": "^0.11.2",
     "html-loader": "^0.4.5",
     "html-webpack-plugin": "^2.29.0",
+    "jscs": "^3.0.7",
+    "jscs-loader": "^0.3.0",
     "node-sass": "^4.5.3",
     "opn-cli": "^3.1.0",
+    "redux-devtools": "^3.4.0",
     "sass-loader": "^6.0.6",
-    "style-loader": "^0.18.2",
+    "stye-loader": "^0.18.2",
     "webpack": "^3.2.0",
     "webpack-dev-server": "^2.5.1"
+  },
+  "dependencies": {
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.5",
+    "redux": "^3.7.2"
   }
 }
