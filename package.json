@@ -41,7 +41,7 @@
     "opn-cli": "^3.1.0",
     "redux-devtools": "^3.4.0",
     "sass-loader": "^6.0.6",
-    "stye-loader": "^0.18.2",
+    "style-loader": "^0.18.2",
     "webpack": "^3.2.0",
     "webpack-dev-server": "^2.5.1"
   },
