@@ -20,6 +20,9 @@
         "plugin:react/recommended"
     ],    
     "rules": {
+        // allow console and debugger in development
+        "no-console": 1,
+        "no-debugger": 1
     }
 }
  

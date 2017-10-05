@@ -8,7 +8,7 @@ const bootstrapEntryPoints = require('./webpack.bootstrap.config.js');
 const isProduction = process.env.NODE_ENV === 'production';
 // set all vendors
 const bootstrapConfig = isProduction ? bootstrapEntryPoints.prod : bootstrapEntryPoints.dev;
-const vendors = [bootstrapConfig];
+// const vendors = [];
 
 const PATHS = {
 	app: path.resolve(__dirname, 'app'),
@@ -18,7 +18,8 @@ const PATHS = {
 config = {
 	entry: {
 		main: PATHS.app,
-		vendor: vendors
+		bootstrap: bootstrapConfig
+		// vendor: vendors
 	},
 	output: {
 		path: PATHS.build,
@@ -35,32 +36,19 @@ config = {
 				use: ['babel-loader', 'eslint-loader']
 			},
 			{
-				test: /\.css$/, 
-				use: ExtractTextPlugin.extract({
-					fallback: 'style-loader',
-					use: 'css-loader'
-					// publicPath: '/dist/'
-				})
+                test: /\.css$/,
+                exclude: /node_modules/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: ['css-loader', 'postcss-loader']
+                }),
 			},
 			{
 				test: /\.scss$/,
-				use: [{
-					loader: 'style-loader'
-				}, {
-					loader: 'css-loader'
-				}, {
-					loader: 'postcss-loader', // Run post css actions
-					options: {
-						plugins: function () { // post css plugins, can be exported to postcss.config.js
-							return [
-								require('precss'),
-								require('autoprefixer')
-							];
-						}
-					}
-				}, {
-					loader: 'sass-loader'
-				}]
+				use: ExtractTextPlugin.extract({
+					fallback: 'style-loader',
+					use : ['css-loader', 'postcss-loader', 'sass-loader']
+				})
 			},
 			{
 				test: /\.js$/,
@@ -93,6 +81,7 @@ config = {
 			"window.jQuery": "jquery",
 			Tether: "tether",
 			"window.Tether": "tether",
+			Popper: 'popper.js',
 			Alert: "exports-loader?Alert!bootstrap/js/dist/alert",
 			Button: "exports-loader?Button!bootstrap/js/dist/button",
 			Carousel: "exports-loader?Carousel!bootstrap/js/dist/carousel",
@@ -114,8 +103,8 @@ config = {
 			template: './src/index_template.ejs'
 		}),
 		new ExtractTextPlugin({
-			filename: 'styles.css',
-			disable: false,
+			filename: '/css/[name].css',
+			disable: !isProduction,
 			allChunks: true
 		}),
 		new CleanWebpackPlugin([PATHS.build], {
