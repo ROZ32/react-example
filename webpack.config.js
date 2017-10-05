@@ -3,10 +3,12 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
+const bootstrapEntryPoints = require('./webpack.bootstrap.config.js');
 
 const isProduction = process.env.NODE_ENV === 'production';
 // set all vendors
-// const vendors = []
+const bootstrapConfig = isProduction ? bootstrapEntryPoints.prod : bootstrapEntryPoints.dev;
+const vendors = [bootstrapConfig];
 
 const PATHS = {
 	app: path.resolve(__dirname, 'app'),
@@ -15,8 +17,8 @@ const PATHS = {
 
 config = {
 	entry: {
-		main: PATHS.app
-		// vendor: vendors
+		main: PATHS.app,
+		vendor: vendors
 	},
 	output: {
 		path: PATHS.build,
@@ -30,7 +32,7 @@ config = {
 				test: /\.js$/,
 				include: PATHS.app,
 				exclude: /node_modules/,
-				use: 'jscs-loader'
+				use: ['babel-loader', 'eslint-loader']
 			},
 			{
 				test: /\.css$/, 
@@ -42,7 +44,23 @@ config = {
 			},
 			{
 				test: /\.scss$/,
-				use: ExtractTextPlugin.extract(['style-loader', 'css-loader', 'sass-loader'])
+				use: [{
+					loader: 'style-loader'
+				}, {
+					loader: 'css-loader'
+				}, {
+					loader: 'postcss-loader', // Run post css actions
+					options: {
+						plugins: function () { // post css plugins, can be exported to postcss.config.js
+							return [
+								require('precss'),
+								require('autoprefixer')
+							];
+						}
+					}
+				}, {
+					loader: 'sass-loader'
+				}]
 			},
 			{
 				test: /\.js$/,
@@ -68,6 +86,24 @@ config = {
 	plugins: [
 		new webpack.DefinePlugin({
 			ENV: JSON.stringify(process.env.NODE_ENV)
+		}),
+		new webpack.ProvidePlugin({
+			$: "jquery",
+			jQuery: "jquery",
+			"window.jQuery": "jquery",
+			Tether: "tether",
+			"window.Tether": "tether",
+			Alert: "exports-loader?Alert!bootstrap/js/dist/alert",
+			Button: "exports-loader?Button!bootstrap/js/dist/button",
+			Carousel: "exports-loader?Carousel!bootstrap/js/dist/carousel",
+			Collapse: "exports-loader?Collapse!bootstrap/js/dist/collapse",
+			Dropdown: "exports-loader?Dropdown!bootstrap/js/dist/dropdown",
+			Modal: "exports-loader?Modal!bootstrap/js/dist/modal",
+			Popover: "exports-loader?Popover!bootstrap/js/dist/popover",
+			Scrollspy: "exports-loader?Scrollspy!bootstrap/js/dist/scrollspy",
+			Tab: "exports-loader?Tab!bootstrap/js/dist/tab",
+			Tooltip: "exports-loader?Tooltip!bootstrap/js/dist/tooltip",
+			Util: "exports-loader?Util!bootstrap/js/dist/util",
 		}),
 		new webpack.HotModuleReplacementPlugin(),
 		new HtmlWebpackPlugin({
