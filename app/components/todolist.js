@@ -1,15 +1,8 @@
 import React from 'react';
+import classNames from 'classnames';
 
 import '../styles/app.scss'
 
-// const Headline = () => {
-// 	return <h1>Hello World!!!</h1>
-// };
-
-// const Greatings = (props) => {
-// 	const {name} = props;
-// 	return <p>This is a test text <b>{name}</b></p>
-// };
 const MESSAGE = 'No items on the list';
 
 export class TodoList extends React.Component {
@@ -17,7 +10,13 @@ export class TodoList extends React.Component {
 		super(props);
 
 		this.state = {
-			itemsList: ['test1', 'test2', 'test3'],
+			itemsList: [{
+				name: 'test1'
+			}, {
+				name: 'test2'
+			}, {
+				name: 'test3'
+			}],
 			message: ''
 		};
 	}
@@ -25,16 +24,16 @@ export class TodoList extends React.Component {
 	addItem(event) {
 		event.preventDefault();
 		const {itemsList} = this.state;
-		const newItem = this.newItem.value;
-		const isOnTheList = itemsList.includes(newItem);
+		const newItemValue = this.newItem.value;
+		const isOnTheList = itemsList.filter(currentItem => { return currentItem.name === newItemValue});
 
-		if (isOnTheList) {
+		if (isOnTheList.length > 0) {
 			this.setState({
-				message: `Item '${newItem}' already on the list`
+				message: `Item '${newItemValue}' already on the list`
 			})
 		} else {
-			newItem !== '' && this.setState({
-				itemsList: [...itemsList, newItem],
+			newItemValue !== '' && this.setState({
+				itemsList: [...itemsList, { name: newItemValue }],
 				message: ''
 			});
 		}
@@ -42,9 +41,9 @@ export class TodoList extends React.Component {
 		this.newItem.value = '';
 	}
 
-	removeItem(item) {
+	removeItem(index) {
 		const {itemsList} = this.state;
-		itemsList.splice(itemsList.indexOf(item),1);
+		itemsList.splice(index,1);
 		
 		this.setState({
 			itemsList,
@@ -64,8 +63,58 @@ export class TodoList extends React.Component {
 		})
 	}
 
+	__repeatedName(name) {
+		const {itemsList} = this.state;
+		const isOnTheList = itemsList.filter(currentItem => { return currentItem.name === name});
+		return isOnTheList.length > 0 ? true : false;
+	}
+
+	editItem(item, index) {
+		const {itemsList} = this.state;
+		const editValue = this["edit-" + item.name].value;
+		
+		if (editValue !== '' && editValue !== item.name) {
+			if (!this.__repeatedName(editValue)) {
+				item.name = editValue;
+			} else {
+				this.setState({
+					message: `Item '${editValue}' already on the list`
+				});
+				return;
+			}
+		}
+
+		item.edit = false;
+		itemsList.splice(index,1, item);
+		this.setState({
+			itemsList,
+			message: ''
+		});
+	}
+
+	toggleEdit(item, index) {
+		const {itemsList} = this.state;
+		item.edit = !item.edit;
+
+		itemsList.splice(index,1, item);
+		this.setState({
+			itemsList
+		});
+	}
+
+	toggleItemStatus(item, index) {
+		const {itemsList} = this.state;
+		item.done = !item.done;
+
+		itemsList.splice(index,1, item);
+		this.setState({
+			itemsList
+		});
+	}
+
 	render() {
 		const {itemsList, message} = this.state;
+
 		return (
 			<div className="app-main-container">
 				<div className="container">
@@ -73,7 +122,6 @@ export class TodoList extends React.Component {
 					<div className="row justify-content-center">
 						<div className="col-4">
 							<form className="form-group" onSubmit={event => this.addItem(event)}>
-								<label htmlFor="exampleInputEmail1">New list item</label>
 								<div className="form-inline">
 									<input ref={item => this.newItem = item} type="text" className="form-control" id="newItem" aria-describedby="newItem" placeholder="New item...">
 									</input>
@@ -90,9 +138,9 @@ export class TodoList extends React.Component {
 						<table className="table table-hover table-inverse">
 							<thead>
 								<tr>
-									<th>#</th>
-									<th>Item</th>
-									<th>Action</th>
+									<th width="10%">#</th>
+									<th width="65%">Item</th>
+									<th width="25%">Actions</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -100,11 +148,34 @@ export class TodoList extends React.Component {
 	
 									itemsList.map((item, index) => {
 										return (
-											<tr key={item}>
+											<tr key={item.name}>
 												<th scope="row">{index}</th>
-												<td>{item}</td>
-												<td>
-													<button type="button" className="btn btn-secondary float-right" onClick={() => this.removeItem(item)}>Remove</button>
+												<td className={classNames({'item-done': item.done})}>
+												{
+													item.edit ? <input type="text" placeholder={item.name} defaultValue={item.name} ref={(edit) => this["edit-" + item.name] = edit }/> : item.name
+												}
+												</td>
+												<td className="pull-right">
+													{	
+														!item.edit &&
+														<div className="actions-buttons">
+															<button
+																type="button"
+																className="btn btn-success"
+																onClick={() => this.toggleItemStatus(item, index)}>
+																{item.done ? 'Uncheck' : 'Check'}
+															</button>
+															<button type="button" className="btn btn-warning" onClick={() => this.toggleEdit(item, index)}>Edit</button>
+															<button type="button" className="btn btn-danger" onClick={() => this.removeItem(index)}>Remove</button>
+														</div>
+													}
+													{
+														item.edit &&
+														<div className="actions-buttons">															
+															<button type="button" className="btn btn-info" onClick={() => this.editItem(item, index)}>Change</button>
+															<button type="button" className="btn btn-secondary" onClick={() => this.toggleEdit(item, index)}>Cancel</button>
+														</div>
+													}
 												</td>
 											</tr>
 										)
