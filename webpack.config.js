@@ -11,7 +11,7 @@ const bootstrapConfig = isProduction ? bootstrapEntryPoints.prod : bootstrapEntr
 // const vendors = [];
 
 const PATHS = {
-	app: path.resolve(__dirname, 'app'),
+	app: path.resolve(__dirname, 'src/app'),
 	build: path.join(__dirname, '/dist')
 };
 
@@ -36,18 +36,34 @@ config = {
 				use: ['babel-loader', 'eslint-loader']
 			},
 			{
-                test: /\.css$/,
-                exclude: /node_modules/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: ['css-loader', 'postcss-loader']
-                }),
+				test: /\.css$/,
+				exclude: /node_modules/,
+				use: ExtractTextPlugin.extract({
+					fallback: 'style-loader',
+					use: [{
+						loader: 'css-loader',
+						options: {
+							minimize: isProduction
+						}
+					}, {
+						loader: 'postcss-loader'
+					}]
+				}),
 			},
 			{
 				test: /\.scss$/,
 				use: ExtractTextPlugin.extract({
 					fallback: 'style-loader',
-					use : ['css-loader', 'postcss-loader', 'sass-loader']
+					use : [{
+						loader: 'css-loader',
+						options: {
+							minimize: isProduction
+						}
+					}, { 
+						loader: 'postcss-loader'
+					}, {
+						loader: 'sass-loader'
+					}]
 				})
 			},
 			{
@@ -103,7 +119,7 @@ config = {
 			template: './src/index_template.ejs'
 		}),
 		new ExtractTextPlugin({
-			filename: '/css/[name].css',
+			filename: './css/[name].css',
 			disable: !isProduction,
 			allChunks: true
 		}),
@@ -120,18 +136,6 @@ config = {
 		open: true,
 		hot: true
 	}
-};
-
-if (isProduction) {
-	// config.plugins.push(new webpack.optimize.UglifyJsPlugin({
-		// minimize: true,
-		// compress: {
-		// 	warnings: false
-		// },
-		// mangle: false,
-		// output: { comments: false }
-
-	// }));
 };
 
 module.exports = config;
