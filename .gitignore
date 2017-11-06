@@ -61,3 +61,7 @@ typings/
 # sublime
 *.sublime-workspace
 *.sublime-project
+
+# dist dir
+dist/
+

@@ -9,7 +9,7 @@
     "build:dev": "export NODE_ENV=development; webpack --progress --watch --colors",
     "build:qa": "export NODE_ENV=development; webpack --colors",
     "build:prod": "export NODE_ENV=production; webpack -p",
-    "test": "test"
+    "test": "echo \"test definition\""
   },
   "repository": {
     "type": "git",
@@ -59,12 +59,14 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "history": "^4.7.2",
     "jquery": "^3.2.1",
     "popper.js": "^1.12.5",
     "prop-types": "^15.6.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",
+    "react-router": "^4.2.0",
     "redux": "^3.7.2"
   }
 }
