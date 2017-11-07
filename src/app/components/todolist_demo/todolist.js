@@ -1,7 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import './styles/todolist.scss'
+import '../../styles/basic_demos.scss';
+import '../../styles/todolist.scss'
 
 const MESSAGE = 'No items on the list';
 

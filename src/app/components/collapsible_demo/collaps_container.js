@@ -2,6 +2,7 @@ import React from 'react';
 import image from '../../images/expand-vertical-4.svg';
 
 import Collapsible from './collapsible';
+import '../../styles/basic_demos.scss';
 import '../../styles/collapsible_demo.scss';
 
 export class CollapsibleContainer extends React.Component {

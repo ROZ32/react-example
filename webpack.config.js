@@ -8,7 +8,7 @@ const bootstrapEntryPoints = require('./webpack.bootstrap.config.js');
 const isProduction = process.env.NODE_ENV === 'production';
 // set all vendors
 const bootstrapConfig = isProduction ? bootstrapEntryPoints.prod : bootstrapEntryPoints.dev;
-// const vendors = [];
+const vendors = ["font-awesome-webpack"];
 
 const PATHS = {
 	app: path.resolve(__dirname, 'src/app'),
@@ -18,8 +18,8 @@ const PATHS = {
 config = {
 	entry: {
 		main: PATHS.app,
-		bootstrap: bootstrapConfig
-		// vendor: vendors
+		bootstrap: bootstrapConfig,
+		vendor: vendors
 	},
 	output: {
 		path: PATHS.build,
@@ -63,6 +63,22 @@ config = {
 						loader: 'postcss-loader'
 					}, {
 						loader: 'sass-loader'
+					}]
+				})
+			},
+			{
+				test: /\.less$/,
+				use: ExtractTextPlugin.extract({
+					fallback: 'style-loader',
+					use : [{
+						loader: 'css-loader',
+						options: {
+							minimize: isProduction
+						}
+					}, { 
+						loader: 'postcss-loader'
+					}, {
+						loader: 'less-loader'
 					}]
 				})
 			},
@@ -131,7 +147,8 @@ config = {
 		})
 	],
 	devServer: {
-		contentBase: PATHS.build,
+		contentBase: PATHS.public,
+		historyApiFallback: true,
 		compress: true,
 		open: true,
 		hot: true

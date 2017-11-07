@@ -1,6 +1,7 @@
 import React from 'react';
 import image from '../../images/cloud-upload-download-data-transfer.svg';
 
+import '../../styles/basic_demos.scss';
 import '../../styles/currencies_demo.scss';
 import data from './data';
 

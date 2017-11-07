@@ -2,6 +2,7 @@ import React from 'react';
 import image from '../../images/cloud-upload-download-data-transfer.svg';
 
 import Collapsible from '../collapsible_demo/collapsible';
+import '../../styles/basic_demos.scss';
 import '../../styles/collapsible_demo.scss';
 
 // const Contact = (props) => {
