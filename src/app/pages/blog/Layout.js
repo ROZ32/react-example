@@ -16,7 +16,7 @@ import Contact from './Contact';
 import Post from './Post';
 import NotFound from './NotFound';
 
-// import {TodoList} from './components/todolist_demo/todolist';
+import TodoList from '../../components/todolist_demo/todolist';
 // import {CollapsibleContainer} from './components/collapsible_demo/collaps_container';
 // import {Fetch} from './components/fetch_demo/fetch';
 // import {CurrenciesConverter} from './components/currencies_demo/currencies_converter';
@@ -37,6 +37,7 @@ class Layout extends Component {
 						<Route path="/about" component={ About }/>
 						<Route path="/contact" component={ Contact }/>
 						<Route path="/post" component={ Post }/>
+						<Route path="/todo" component={ TodoList }/>
 						<Route component={ NotFound }></Route>
 					</Switch>
 					<hr></hr>

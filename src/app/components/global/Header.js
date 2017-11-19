@@ -23,19 +23,21 @@ class Header extends Component {
 					</button>
 					<div className="collapse navbar-collapse" id="navbarResponsive">
 						<ul className="navbar-nav ml-auto">
-
-						<li className="nav-item">
-							<Link className="nav-link" to="/">Home</Link>
-						</li>
-						<li className="nav-item">
-							<Link className="nav-link" to="/about">About</Link>
-						</li>
-						<li className="nav-item">
-							<Link className="nav-link" to="/post">Sample Post</Link>
-						</li>
-						<li className="nav-item">
-							<Link className="nav-link" to="/contact">Contact</Link>
-						</li>
+							<li className="nav-item">
+								<Link className="nav-link" to="/">Home</Link>
+							</li>
+							<li className="nav-item">
+								<Link className="nav-link" to="/about">About</Link>
+							</li>
+							<li className="nav-item">
+								<Link className="nav-link" to="/post">Sample Post</Link>
+							</li>
+							<li className="nav-item">
+								<Link className="nav-link" to="/contact">Contact</Link>
+							</li>
+							<li className="nav-item">
+								<Link className="nav-link" to="/todo">Todo</Link>
+							</li>
 						</ul>
 					</div>
 					</div>

@@ -1,12 +1,13 @@
 import React from 'react';
 import classNames from 'classnames';
+// import Todo from './todo';
 
-import '../../styles/basic_demos.scss';
+// import '../../styles/basic_demos.scss';
 import '../../styles/todolist.scss'
 
 const MESSAGE = 'No items on the list';
 
-export class TodoList extends React.Component {
+class TodoList extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -18,6 +19,7 @@ export class TodoList extends React.Component {
 			}, {
 				name: 'test3'
 			}],
+			removeAllShowMessage: false,
 			message: ''
 		};
 	}
@@ -25,13 +27,22 @@ export class TodoList extends React.Component {
 	addItem(event) {
 		event.preventDefault();
 		const {itemsList} = this.state;
+
+		if (itemsList.length === 10) {
+			this.setState({
+				message: `hold it there cowboy, there is to many items on the list,
+					you may want to finish some items first`
+			});
+			return;
+		}
+
 		const newItemValue = this.newItem.value;
 		const isOnTheList = itemsList.filter(currentItem => { return currentItem.name === newItemValue});
 
 		if (isOnTheList.length > 0) {
 			this.setState({
 				message: `Item '${newItemValue}' already on the list`
-			})
+			});
 		} else {
 			newItemValue !== '' && this.setState({
 				itemsList: [...itemsList, { name: newItemValue }],
@@ -60,7 +71,8 @@ export class TodoList extends React.Component {
 	removeAllItems() {
 		this.setState({
 			itemsList: [],
-			message: MESSAGE
+			message: MESSAGE,
+			removeAllShowMessage: false
 		})
 	}
 
@@ -93,6 +105,12 @@ export class TodoList extends React.Component {
 		});
 	}
 
+	toggleRemoveAll () {
+		this.setState({
+			removeAllShowMessage: true
+		});
+	}
+
 	toggleEdit(item, index) {
 		const {itemsList} = this.state;
 		item.edit = !item.edit;
@@ -114,7 +132,7 @@ export class TodoList extends React.Component {
 	}
 
 	render() {
-		const {itemsList, message} = this.state;
+		const {itemsList, message, removeAllShowMessage} = this.state;
 
 		return (
 			<div className="app-main-container">
@@ -139,9 +157,9 @@ export class TodoList extends React.Component {
 						<table className="table table-hover table-inverse">
 							<thead>
 								<tr>
-									<th width="10%">#</th>
-									<th width="65%">Item</th>
-									<th width="25%">Actions</th>
+									<th width="5%">#</th>
+									<th width="85%">Item</th>
+									<th width="10%">Actions</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -156,25 +174,30 @@ export class TodoList extends React.Component {
 													item.edit ? <input type="text" placeholder={item.name} defaultValue={item.name} ref={(edit) => this["edit-" + item.name] = edit }/> : item.name
 												}
 												</td>
-												<td className="pull-right">
-													{	
-														!item.edit &&
-														<div className="actions-buttons">
-															<button
-																type="button"
-																className="btn btn-success"
-																onClick={() => this.toggleItemStatus(item, index)}>
-																{item.done ? 'Uncheck' : 'Check'}
-															</button>
-															<button type="button" className="btn btn-warning" onClick={() => this.toggleEdit(item, index)}>Edit</button>
-															<button type="button" className="btn btn-danger" onClick={() => this.removeItem(index)}>Remove</button>
-														</div>
-													}
+												<td>
 													{
-														item.edit &&
-														<div className="actions-buttons">															
-															<button type="button" className="btn btn-info" onClick={() => this.editItem(item, index)}>Change</button>
-															<button type="button" className="btn btn-secondary" onClick={() => this.toggleEdit(item, index)}>Cancel</button>
+														!item.edit ?
+														<div className="actions-buttons">
+															<a onClick={() => this.toggleItemStatus(item, index)}>
+																{
+																	item.done ? <i className="fa fa-check-square-o" aria-hidden="true"></i> :
+																		<i className="fa fa-square-o" aria-hidden="true"></i>
+																}
+															</a>
+															<a onClick={() => this.toggleEdit(item, index)}>
+																<i className="fa fa-pencil" aria-hidden="true"></i>
+															</a>
+															<a onClick={() => this.removeItem(index)}>
+																<i className="fa fa-times" aria-hidden="true"></i>
+															</a>
+														</div> :
+														<div className="actions-buttons">	
+															<a onClick={() => this.editItem(item, index)}>
+																<i className="fa fa-pencil-square-o" aria-hidden="true"></i>
+															</a>
+															<a onClick={() => this.toggleEdit(item, index)}>
+																<i className="fa fa-window-close" aria-hidden="true"></i>
+															</a>
 														</div>
 													}
 												</td>
@@ -186,7 +209,13 @@ export class TodoList extends React.Component {
 							<tfoot>
 								<tr>
 									<td colSpan="3">
-										<button type="button" className="btn btn-danger float-right" onClick={() => this.removeAllItems()}>Remove all</button>
+										{
+											!removeAllShowMessage ?
+												<button type="button" className="btn btn-danger float-right" onClick={() => this.toggleRemoveAll()}>Remove all</button> :
+												<div className="pull-right">
+													<p>Are you sure you want to delete all the todos? <button type="button" className="btn btn-danger float-right" onClick={() => this.removeAllItems()}>Yeah delete all</button></p>
+												</div>
+										}
 									</td>
 								</tr>
 							</tfoot>
@@ -197,3 +226,5 @@ export class TodoList extends React.Component {
 		)
 	}
 }
+
+export default TodoList;
