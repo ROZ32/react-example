@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 // import Todo from './todo';
+import TodoStore from '../../stores/TodoStore';
+import TodoActions from '../../actions/TodoActions';
 
 // import '../../styles/basic_demos.scss';
 import '../../styles/todolist.scss'
@@ -12,13 +14,7 @@ class TodoList extends React.Component {
 		super(props);
 
 		this.state = {
-			itemsList: [{
-				name: 'test1'
-			}, {
-				name: 'test2'
-			}, {
-				name: 'test3'
-			}],
+			itemsList: TodoStore.getAll(),
 			removeAllShowMessage: false,
 			message: ''
 		};
@@ -44,10 +40,7 @@ class TodoList extends React.Component {
 				message: `Item '${newItemValue}' already on the list`
 			});
 		} else {
-			newItemValue !== '' && this.setState({
-				itemsList: [...itemsList, { name: newItemValue }],
-				message: ''
-			});
+			TodoActions.addTodo(newItemValue);
 		}
 
 		this.newItem.value = '';
@@ -128,6 +121,14 @@ class TodoList extends React.Component {
 		itemsList.splice(index,1, item);
 		this.setState({
 			itemsList
+		});
+	}
+
+	componentWillMount() {
+		TodoStore.on('change', () => {
+			this.setState({
+				todos: TodoStore.getAll()
+			});
 		});
 	}
 
