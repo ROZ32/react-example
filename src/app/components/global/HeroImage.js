@@ -42,6 +42,9 @@ class HeroImage extends Component {
 				headerConfig.title = 'Man must explore, and this is exploration at its greatest';
 				headerConfig.text = 'Have questions? I have answers.';
 				break;
+			case 'todo':
+				headerConfig.title = 'Todo list';
+				headerConfig.text = 'Get organized fast with this simple and clean todo list.';
 		}
 		return headerConfig;
 	}

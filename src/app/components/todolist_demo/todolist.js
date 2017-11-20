@@ -14,17 +14,21 @@ class TodoList extends React.Component {
 		super(props);
 
 		this.state = {
-			itemsList: TodoStore.getAll(),
+			todos: [],
 			removeAllShowMessage: false,
-			message: ''
+			message: '',
+			loading: false
 		};
+
+		this.getTodos = this.getTodos.bind(this);
+		this.showTodosLoader = this.showTodosLoader.bind(this);
 	}
 
 	addItem(event) {
 		event.preventDefault();
-		const {itemsList} = this.state;
+		const {todos} = this.state;
 
-		if (itemsList.length === 10) {
+		if (todos.length === 10) {
 			this.setState({
 				message: `hold it there cowboy, there is to many items on the list,
 					you may want to finish some items first`
@@ -33,7 +37,7 @@ class TodoList extends React.Component {
 		}
 
 		const newItemValue = this.newItem.value;
-		const isOnTheList = itemsList.filter(currentItem => { return currentItem.name === newItemValue});
+		const isOnTheList = todos.filter(currentItem => { return currentItem.name === newItemValue});
 
 		if (isOnTheList.length > 0) {
 			this.setState({
@@ -47,36 +51,36 @@ class TodoList extends React.Component {
 	}
 
 	removeItem(index) {
-		const {itemsList} = this.state;
-		itemsList.splice(index,1);
+		const {todos} = this.state;
+		todos.splice(index,1);
 		
 		this.setState({
-			itemsList,
+			todos,
 		});
 
-		if (itemsList.length === 0) {
+		if (todos.length === 0) {
 			this.setState({
 				message: MESSAGE
 			})
-		}
+}
 	}
 
 	removeAllItems() {
 		this.setState({
-			itemsList: [],
+			todos: [],
 			message: MESSAGE,
 			removeAllShowMessage: false
 		})
 	}
 
 	__repeatedName(name) {
-		const {itemsList} = this.state;
-		const isOnTheList = itemsList.filter(currentItem => { return currentItem.name === name});
+		const {todos} = this.state;
+		const isOnTheList = todos.filter(currentItem => { return currentItem.name === name});
 		return isOnTheList.length > 0 ? true : false;
 	}
 
 	editItem(item, index) {
-		const {itemsList} = this.state;
+		const {todos} = this.state;
 		const editValue = this["edit-" + item.name].value;
 		
 		if (editValue !== '' && editValue !== item.name) {
@@ -91,9 +95,9 @@ class TodoList extends React.Component {
 		}
 
 		item.edit = false;
-		itemsList.splice(index,1, item);
+		todos.splice(index,1, item);
 		this.setState({
-			itemsList,
+			todos,
 			message: ''
 		});
 	}
@@ -105,35 +109,51 @@ class TodoList extends React.Component {
 	}
 
 	toggleEdit(item, index) {
-		const {itemsList} = this.state;
+		const {todos} = this.state;
 		item.edit = !item.edit;
 
-		itemsList.splice(index,1, item);
+		todos.splice(index,1, item);
 		this.setState({
-			itemsList
+			todos
 		});
 	}
 
 	toggleItemStatus(item, index) {
-		const {itemsList} = this.state;
+		const {todos} = this.state;
 		item.done = !item.done;
 
-		itemsList.splice(index,1, item);
+		todos.splice(index,1, item);
 		this.setState({
-			itemsList
+			todos
+		});
+	}
+
+	getTodos() {
+		this.setState({
+			todos: TodoStore.getAll()
+		});
+	}
+
+	showTodosLoader() {
+		this.setState({
+			loading: TodoStore.getLoaderStatus()
 		});
 	}
 
 	componentWillMount() {
-		TodoStore.on('change', () => {
-			this.setState({
-				todos: TodoStore.getAll()
-			});
-		});
+		TodoStore.on('change', this.getTodos);
+		TodoStore.on('showLoader', this.showTodosLoader);
+
+		TodoActions.getAsyncTodos();
+	}
+
+	componentWillUnmount() {
+		TodoStore.removeListener('change', this.getTodos);
+		TodoStore.removeListener('showLoader', this.showTodosLoader);
 	}
 
 	render() {
-		const {itemsList, message, removeAllShowMessage} = this.state;
+		const {todos, message, removeAllShowMessage, loading} = this.state;
 
 		return (
 			<div className="app-main-container">
@@ -154,7 +174,7 @@ class TodoList extends React.Component {
 						message !== '' && <p className="center text-danger">{message}</p>
 					}
 					{
-						itemsList.length > 0 &&
+						todos.length > 0 &&
 						<table className="table table-hover table-inverse">
 							<thead>
 								<tr>
@@ -166,7 +186,7 @@ class TodoList extends React.Component {
 							<tbody>
 								{
 	
-									itemsList.map((item, index) => {
+									todos.map((item, index) => {
 										return (
 											<tr key={item.name}>
 												<th scope="row">{index}</th>
@@ -221,6 +241,13 @@ class TodoList extends React.Component {
 								</tr>
 							</tfoot>
 						</table>
+					}
+					{
+						loading &&
+						<div className="loader-loading">
+							<i className="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+							<span className="sr-only">Loading...</span>
+						</div>
 					}
 				</div>
 			</div>

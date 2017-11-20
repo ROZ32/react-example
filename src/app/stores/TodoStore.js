@@ -4,17 +4,16 @@ import Dispatcher from '../dispatcher';
 class TodoStore extends EventEmitter {
 	constructor() {
 		super()
-		this.todos = [{
-			name: 'test0'
-		}, {
-			name: 'test1'
-		}, {
-			name: 'test2'
-		}];
+		this.todos = [];
+		this.showLoader = false;
 	}
 
 	getAll() {
 		return this.todos;
+	}
+
+	getLoaderStatus() {
+		return this.showLoader;
 	}
 
 	addTodo(name) {
@@ -25,11 +24,33 @@ class TodoStore extends EventEmitter {
 		this.emit('change')
 	}
 
+	appendTodos(newTodos) {
+		this.todos = this.todos.concat(newTodos);
+
+		this.emit('change');
+	}
+
+	loadingDataLoader() {
+		this.emit('showLoader');
+	}
+
 	handleActions(action) {
 		switch(action.type) {
 			case 'ADD_TODO': {
 				const {name} = action;
 				if (name) this.addTodo(name);
+				break;
+			}
+			case 'GET_TODOS': {
+				this.appendTodos(action.todos);
+				this.showLoader = false;
+				this.loadingDataLoader();
+				break;
+			}
+			case 'LOADING_TODOS': {
+				this.showLoader = true;
+				this.loadingDataLoader();
+				break
 			}
 		}
 	}
