@@ -150,7 +150,6 @@ config = {
 		contentBase: PATHS.public,
 		historyApiFallback: true,
 		compress: true,
-		open: true,
 		hot: true
 	}
 };

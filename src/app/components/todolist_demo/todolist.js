@@ -62,7 +62,7 @@ class TodoList extends React.Component {
 			this.setState({
 				message: MESSAGE
 			})
-}
+		}
 	}
 
 	removeAllItems() {
